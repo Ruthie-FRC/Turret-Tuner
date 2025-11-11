@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, UploadFile, Form
+from fastapi import FastAPI, Request, UploadFile
 from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -60,7 +60,6 @@ def generate_pdf_report(analysis_results, tuned_values, system_info, filename):
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-
 @app.post("/run_test", response_class=RedirectResponse)
 async def run_test_data():
     df = load_sample_data()
@@ -70,7 +69,6 @@ async def run_test_data():
 
     pdf_path = generate_pdf_report(str(analysis_results), tuned_values, system_info, "demo_report.pdf")
     return f"/report?file={pdf_path.name}"
-
 
 @app.post("/upload", response_class=RedirectResponse)
 async def upload_logs(file: UploadFile):
@@ -86,11 +84,25 @@ async def upload_logs(file: UploadFile):
     pdf_path = generate_pdf_report(str(analysis_results), tuned_values, system_info, "custom_report.pdf")
     return f"/report?file={pdf_path.name}"
 
-
 @app.get("/report", response_class=HTMLResponse)
 async def report(request: Request, file: str):
-    return templates.TemplateResponse("report.html", {"request": request, "file": file})
-
+    """
+    Renders the report page with:
+      - file: the PDF filename
+      - tuning_values: dictionary of suggested coefficients for chart display
+    """
+    # Load or recreate tuned values for display purposes (example)
+    # In a real system, you might save tuned_values alongside the PDF
+    # Here we will just mock it for demo
+    tuned_values = {"kP": 0.5, "kI": 0.01, "kD": 0.1}  # Replace with actual saved values if available
+    return templates.TemplateResponse(
+        "report.html",
+        {
+            "request": request,
+            "file": file,
+            "tuning_values": tuned_values
+        }
+    )
 
 @app.get("/download/{filename}")
 async def download_report(filename: str):
