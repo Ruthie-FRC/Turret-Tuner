@@ -30,7 +30,28 @@
 
           {% if tuning_values is defined and tuning_values %}
           <h4 class="mt-4">🎯 Suggested Coefficients</h4>
-          <!-- Store JSON safely in data attribute -->
+
+          <!-- Table of Coefficients -->
+          <div class="table-responsive mb-4">
+            <table class="table table-dark table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Coefficient</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for key, value in tuning_values.items() %}
+                <tr>
+                  <td>{{ key }}</td>
+                  <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Chart -->
           <canvas id="tuningChart" height="150" data-values='{{ tuning_values | tojson | safe }}'></canvas>
           {% endif %}
 
